@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Language Interpreter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 20px;
+        }
+        .output {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .input-field {
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Custom Language Interpreter</h1>
+
+<!-- Input area for commands -->
+<textarea id="commandInput" placeholder="Enter commands here..." rows="10" style="width:100%;"></textarea>
+<button class="btn" onclick="processCommands()">Run Commands</button>
+
+<!-- Output area for dynamic content -->
+<div id="output" class="output"></div>
+
+<script>
+    function processCommands() {
+        const commands = document.getElementById("commandInput").value.split('\n');
+        const output = document.getElementById("output");
+        output.innerHTML = '';  // Clear previous output
+
+        commands.forEach(line => {
+            line = line.trim();
+            if (line.startsWith("GET MATHS")) {
+                // Math Expression
+                const expressionLine = line.split("MATHS = ")[1];
+                try {
+                    const result = eval(expressionLine);
+                    const resultElement = document.createElement('p');
+                    resultElement.textContent = `Result: ${result}`;
+                    output.appendChild(resultElement);
+                } catch (error) {
+                    output.innerHTML += `<p>Error in math expression: ${error.message}</p>`;
+                }
+            } else if (line.startsWith("HEADER")) {
+                // Header element
+                const headerText = line.split("HEADER ")[1];
+                const headerElement = document.createElement('h2');
+                headerElement.textContent = headerText;
+                output.appendChild(headerElement);
+            } else if (line.startsWith("PARAGRAPH")) {
+                // Paragraph element
+                const paragraphText = line.split("PARAGRAPH ")[1];
+                const paragraphElement = document.createElement('p');
+                paragraphElement.textContent = paragraphText;
+                output.appendChild(paragraphElement);
+            } else if (line.startsWith("BUTTON")) {
+                // Button element
+                const buttonText = line.split("BUTTON ")[1];
+                const buttonElement = document.createElement('button');
+                buttonElement.className = 'btn';
+                buttonElement.textContent = buttonText;
+                buttonElement.onclick = () => alert(`Button "${buttonText}" clicked!`);
+                output.appendChild(buttonElement);
+            } else if (line.startsWith("LINK")) {
+                // Link element
+                const [_, text, url] = line.match(/^LINK\s+"(.+)"\s+TO\s+"(.+)"$/) || [];
+                if (text && url) {
+                    const linkElement = document.createElement('a');
+                    linkElement.href = url;
+                    linkElement.textContent = text;
+                    linkElement.target = '_blank';
+                    linkElement.style.color = '#007bff';
+                    linkElement.style.textDecoration = 'none';
+                    linkElement.style.display = 'block';
+                    linkElement.style.margin = '5px 0';
+                    output.appendChild(linkElement);
+                }
+            } else if (line.startsWith("INPUT")) {
+                // Input field
+                const placeholderText = line.split("INPUT ")[1];
+                const inputElement = document.createElement('input');
+                inputElement.className = 'input-field';
+                inputElement.placeholder = placeholderText;
+                output.appendChild(inputElement);
+            } else if (line.startsWith("PRINT")) {
+                // Print a value (text)
+                const text = line.split("PRINT ")[1];
+                const printElement = document.createElement('p');
+                printElement.textContent = text;
+                output.appendChild(printElement);
+            }
+        });
+    }
+</script>
+
+</body>
+  </html>
